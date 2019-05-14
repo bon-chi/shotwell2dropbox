@@ -104,9 +104,10 @@ fn copy(path: &Path, dropbox_path: &Path) {
         dropbox_path.to_str().unwrap(),
         get_create_datetime(path)
     );
+
     if !Path::new(&to).exists() {
         println!("copy: {}", to);
-        // std::fs::copy(path, to);
+        std::fs::copy(path, to);
         return;
     }
     // ファイルの中身を確認して同じだったらreturn
@@ -122,9 +123,14 @@ fn copy(path: &Path, dropbox_path: &Path) {
             &format!("-{}.jpg", (i - 1).to_string()),
             &format!("-{}.jpg", (i).to_string()),
         );
-        if !Path::new(&to).exists() {
+        if Path::new(&to).exists() {
+            if diff(path.to_str().unwrap(), &to) {
+                println!("exists: {}", to);
+                return;
+            }
+        } else {
             println!("copy: {}", to);
-            // std::fs::copy(path, to);
+            std::fs::copy(path, to);
             return;
         }
         // println!("inc: {}", to);
